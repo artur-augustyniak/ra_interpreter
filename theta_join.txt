@@ -1,0 +1,139 @@
+ 
+
+ra> Person \join (Eats \join_{price <8.5} Serves);
+Output schema: (name text, age integer, gender text, pizza text, pizzeria text, pizza:1 text, price float)
+-----
+Ben|21|male|cheese|Chicago Pizza|cheese|7.75
+Ben|21|male|cheese|Little Caesars|cheese|7
+Ben|21|male|cheese|New York Pizza|cheese|7
+Ben|21|male|cheese|New York Pizza|pepperoni|8
+Ben|21|male|cheese|Straw Hat|pepperoni|8
+Cal|33|male|supreme|Chicago Pizza|cheese|7.75
+Cal|33|male|supreme|Little Caesars|cheese|7
+Cal|33|male|supreme|New York Pizza|cheese|7
+Cal|33|male|supreme|New York Pizza|pepperoni|8
+Cal|33|male|supreme|Straw Hat|pepperoni|8
+Dan|13|male|cheese|Chicago Pizza|cheese|7.75
+Dan|13|male|cheese|Little Caesars|cheese|7
+Dan|13|male|cheese|New York Pizza|cheese|7
+Dan|13|male|cheese|New York Pizza|pepperoni|8
+Dan|13|male|cheese|Straw Hat|pepperoni|8
+Dan|13|male|mushroom|Chicago Pizza|cheese|7.75
+Dan|13|male|mushroom|Little Caesars|cheese|7
+Dan|13|male|mushroom|New York Pizza|cheese|7
+Dan|13|male|mushroom|New York Pizza|pepperoni|8
+Dan|13|male|mushroom|Straw Hat|pepperoni|8
+Dan|13|male|pepperoni|Chicago Pizza|cheese|7.75
+Dan|13|male|pepperoni|Little Caesars|cheese|7
+Dan|13|male|pepperoni|New York Pizza|cheese|7
+Dan|13|male|pepperoni|New York Pizza|pepperoni|8
+Dan|13|male|pepperoni|Straw Hat|pepperoni|8
+Dan|13|male|sausage|Chicago Pizza|cheese|7.75
+Dan|13|male|sausage|Little Caesars|cheese|7
+Dan|13|male|sausage|New York Pizza|cheese|7
+Dan|13|male|sausage|New York Pizza|pepperoni|8
+Dan|13|male|sausage|Straw Hat|pepperoni|8
+Dan|13|male|supreme|Chicago Pizza|cheese|7.75
+Dan|13|male|supreme|Little Caesars|cheese|7
+Dan|13|male|supreme|New York Pizza|cheese|7
+Dan|13|male|supreme|New York Pizza|pepperoni|8
+Dan|13|male|supreme|Straw Hat|pepperoni|8
+Eli|45|male|cheese|Chicago Pizza|cheese|7.75
+Eli|45|male|cheese|Little Caesars|cheese|7
+Eli|45|male|cheese|New York Pizza|cheese|7
+Eli|45|male|cheese|New York Pizza|pepperoni|8
+Eli|45|male|cheese|Straw Hat|pepperoni|8
+Eli|45|male|supreme|Chicago Pizza|cheese|7.75
+Eli|45|male|supreme|Little Caesars|cheese|7
+Eli|45|male|supreme|New York Pizza|cheese|7
+Eli|45|male|supreme|New York Pizza|pepperoni|8
+Eli|45|male|supreme|Straw Hat|pepperoni|8
+Fay|21|female|mushroom|Chicago Pizza|cheese|7.75
+Fay|21|female|mushroom|Little Caesars|cheese|7
+Fay|21|female|mushroom|New York Pizza|cheese|7
+Fay|21|female|mushroom|New York Pizza|pepperoni|8
+Fay|21|female|mushroom|Straw Hat|pepperoni|8
+Gus|24|male|cheese|Chicago Pizza|cheese|7.75
+Gus|24|male|cheese|Little Caesars|cheese|7
+Gus|24|male|cheese|New York Pizza|cheese|7
+Gus|24|male|cheese|New York Pizza|pepperoni|8
+Gus|24|male|cheese|Straw Hat|pepperoni|8
+Gus|24|male|mushroom|Chicago Pizza|cheese|7.75
+Gus|24|male|mushroom|Little Caesars|cheese|7
+Gus|24|male|mushroom|New York Pizza|cheese|7
+Gus|24|male|mushroom|New York Pizza|pepperoni|8
+Gus|24|male|mushroom|Straw Hat|pepperoni|8
+Gus|24|male|supreme|Chicago Pizza|cheese|7.75
+Gus|24|male|supreme|Little Caesars|cheese|7
+Gus|24|male|supreme|New York Pizza|cheese|7
+Gus|24|male|supreme|New York Pizza|pepperoni|8
+Gus|24|male|supreme|Straw Hat|pepperoni|8
+Hil|30|female|cheese|Chicago Pizza|cheese|7.75
+Hil|30|female|cheese|Little Caesars|cheese|7
+Hil|30|female|cheese|New York Pizza|cheese|7
+Hil|30|female|cheese|New York Pizza|pepperoni|8
+Hil|30|female|cheese|Straw Hat|pepperoni|8
+Hil|30|female|supreme|Chicago Pizza|cheese|7.75
+Hil|30|female|supreme|Little Caesars|cheese|7
+Hil|30|female|supreme|New York Pizza|cheese|7
+Hil|30|female|supreme|New York Pizza|pepperoni|8
+Hil|30|female|supreme|Straw Hat|pepperoni|8
+Ian|18|male|pepperoni|Chicago Pizza|cheese|7.75
+Ian|18|male|pepperoni|Little Caesars|cheese|7
+Ian|18|male|pepperoni|New York Pizza|cheese|7
+Ian|18|male|pepperoni|New York Pizza|pepperoni|8
+Ian|18|male|pepperoni|Straw Hat|pepperoni|8
+Ian|18|male|supreme|Chicago Pizza|cheese|7.75
+Ian|18|male|supreme|Little Caesars|cheese|7
+Ian|18|male|supreme|New York Pizza|cheese|7
+Ian|18|male|supreme|New York Pizza|pepperoni|8
+Ian|18|male|supreme|Straw Hat|pepperoni|8
+-----
+Total number of rows: 85
+
+ra> Person \join (Eats \join_{price <7} Serves);
+Output schema: (name null, age null, gender null, pizza null, pizzeria null, pizza:1 null, price null)
+-----
+-----
+Total number of rows: 0
+
+ra> Person \join (Eats \join_{price <7.1} Serves);
+Output schema: (name text, age integer, gender text, pizza text, pizzeria text, pizza:1 text, price integer)
+-----
+Ben|21|male|cheese|Little Caesars|cheese|7
+Ben|21|male|cheese|New York Pizza|cheese|7
+Cal|33|male|supreme|Little Caesars|cheese|7
+Cal|33|male|supreme|New York Pizza|cheese|7
+Dan|13|male|cheese|Little Caesars|cheese|7
+Dan|13|male|cheese|New York Pizza|cheese|7
+Dan|13|male|mushroom|Little Caesars|cheese|7
+Dan|13|male|mushroom|New York Pizza|cheese|7
+Dan|13|male|pepperoni|Little Caesars|cheese|7
+Dan|13|male|pepperoni|New York Pizza|cheese|7
+Dan|13|male|sausage|Little Caesars|cheese|7
+Dan|13|male|sausage|New York Pizza|cheese|7
+Dan|13|male|supreme|Little Caesars|cheese|7
+Dan|13|male|supreme|New York Pizza|cheese|7
+Eli|45|male|cheese|Little Caesars|cheese|7
+Eli|45|male|cheese|New York Pizza|cheese|7
+Eli|45|male|supreme|Little Caesars|cheese|7
+Eli|45|male|supreme|New York Pizza|cheese|7
+Fay|21|female|mushroom|Little Caesars|cheese|7
+Fay|21|female|mushroom|New York Pizza|cheese|7
+Gus|24|male|cheese|Little Caesars|cheese|7
+Gus|24|male|cheese|New York Pizza|cheese|7
+Gus|24|male|mushroom|Little Caesars|cheese|7
+Gus|24|male|mushroom|New York Pizza|cheese|7
+Gus|24|male|supreme|Little Caesars|cheese|7
+Gus|24|male|supreme|New York Pizza|cheese|7
+Hil|30|female|cheese|Little Caesars|cheese|7
+Hil|30|female|cheese|New York Pizza|cheese|7
+Hil|30|female|supreme|Little Caesars|cheese|7
+Hil|30|female|supreme|New York Pizza|cheese|7
+Ian|18|male|pepperoni|Little Caesars|cheese|7
+Ian|18|male|pepperoni|New York Pizza|cheese|7
+Ian|18|male|supreme|Little Caesars|cheese|7
+Ian|18|male|supreme|New York Pizza|cheese|7
+-----
+Total number of rows: 34
+

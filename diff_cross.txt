@@ -1,0 +1,961 @@
+ 
+RA: an interactive relational algebra interpreter
+Version 2.1b by Jun Yang (junyang@cs.duke.edu)
+Type "\help;" for help
+
+ra> \project_{ name } Person;
+Output schema: (name text)
+-----
+Amy
+Ben
+Cal
+Dan
+Eli
+Fay
+Gus
+Hil
+Ian
+-----
+Total number of rows: 9
+
+ra> \union (\project_{name} Person, \project_{pizza} Serves);
+Error parsing input:
+line 1:1: unexpected token: \union
+Rest of input skipped
+
+ra> \union (\project_{name} Person, \project_{pizza} Serves);
+Error parsing input:
+line 1:1: unexpected token: \union
+Rest of input skipped
+
+ra> \
+
+\cross       \diff        \help;       \intersect   \join        \join_{      \list;       \project_{   \quit;
+\rename_{    \select_{    \sqlexec_{   \union
+ra> \union (\project_{name} Person, \project_{pizza} Serves);
+Error parsing input:
+line 1:1: unexpected token: \union
+Rest of input skipped
+
+ra> \project_{name} Person \union \project_{pizza} Serves;
+Output schema: (name text)
+-----
+Amy
+Ben
+Cal
+Dan
+Eli
+Fay
+Gus
+Hil
+Ian
+cheese
+mushroom
+pepperoni
+sausage
+supreme
+-----
+Total number of rows: 14
+
+ra> \project_{ name } Person \diff \project_{name} Eats;
+Output schema: (name null)
+-----
+-----
+Total number of rows: 0
+
+ra> \project_{ name } Person \diff \project_{name} Eats;
+Output schema: (name text)
+-----
+Amy
+-----
+Total number of rows: 1
+
+ra> \project_{ name } Person \diff \project_{name} Eats \join Person;
+Output schema: (name text, age integer, gender text)
+-----
+Amy|16|female
+-----
+Total number of rows: 1
+
+ra> \project_{name, gender} \project_{ name } Person \diff \project_{name} Eats \join Person;
+Error validating subquery:
+\project_{name, gender} <- ERROR!
+    \project_{ name } <- output schema: RA_TMP_VIEW_2(name text)
+        Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+Error message: no such column: gender
+Error code: 0
+SQL state: null
+
+ra> \project_{name, gender} (\project_{ name } Person \diff \project_{name} Eats \join Person);
+Output schema: (name text, gender text)
+-----
+Amy|female
+-----
+Total number of rows: 1
+
+ra> \project_{ pizzeria} Serves;
+Output schema: (pizzeria text)
+-----
+Amy
+Chicago Pizza
+Dominos
+Little Caesars
+New York Pizza
+Pizza Hut
+Straw Hat
+-----
+Total number of rows: 7
+
+ra> \project_{ pizzeria} Serves \intersect \project_{name} Person;
+Output schema: (pizzeria text)
+-----
+Amy
+-----
+Total number of rows: 1
+
+ra> \project_{ pizzeria} Serves \join \project_{name} Person;
+Output schema: (pizzeria text, name text)
+-----
+Amy|Amy
+Amy|Ben
+Amy|Cal
+Amy|Dan
+Amy|Eli
+Amy|Fay
+Amy|Gus
+Amy|Hil
+Amy|Ian
+Chicago Pizza|Amy
+Chicago Pizza|Ben
+Chicago Pizza|Cal
+Chicago Pizza|Dan
+Chicago Pizza|Eli
+Chicago Pizza|Fay
+Chicago Pizza|Gus
+Chicago Pizza|Hil
+Chicago Pizza|Ian
+Dominos|Amy
+Dominos|Ben
+Dominos|Cal
+Dominos|Dan
+Dominos|Eli
+Dominos|Fay
+Dominos|Gus
+Dominos|Hil
+Dominos|Ian
+Little Caesars|Amy
+Little Caesars|Ben
+Little Caesars|Cal
+Little Caesars|Dan
+Little Caesars|Eli
+Little Caesars|Fay
+Little Caesars|Gus
+Little Caesars|Hil
+Little Caesars|Ian
+New York Pizza|Amy
+New York Pizza|Ben
+New York Pizza|Cal
+New York Pizza|Dan
+New York Pizza|Eli
+New York Pizza|Fay
+New York Pizza|Gus
+New York Pizza|Hil
+New York Pizza|Ian
+Pizza Hut|Amy
+Pizza Hut|Ben
+Pizza Hut|Cal
+Pizza Hut|Dan
+Pizza Hut|Eli
+Pizza Hut|Fay
+Pizza Hut|Gus
+Pizza Hut|Hil
+Pizza Hut|Ian
+Straw Hat|Amy
+Straw Hat|Ben
+Straw Hat|Cal
+Straw Hat|Dan
+Straw Hat|Eli
+Straw Hat|Fay
+Straw Hat|Gus
+Straw Hat|Hil
+Straw Hat|Ian
+-----
+Total number of rows: 63
+
+ra> \project_{ pizzeria} Serves \intersect \project_{name} Person;
+Output schema: (pizzeria text)
+-----
+Amy
+-----
+Total number of rows: 1
+
+ra> \project_{ pizzeria} Serves;
+Output schema: (pizzeria text)
+-----
+Amy
+Chicago Pizza
+Dominos
+Little Caesars
+New York Pizza
+Pizza Hut
+Straw Hat
+-----
+Total number of rows: 7
+
+ra> Serves;
+Output schema: (pizzeria text, pizza text, price float)
+-----
+Amy|familiy|12.6
+Chicago Pizza|cheese|7.75
+Chicago Pizza|supreme|8.5
+Dominos|cheese|9.75
+Dominos|mushroom|11
+Little Caesars|cheese|7
+Little Caesars|mushroom|9.25
+Little Caesars|pepperoni|9.75
+Little Caesars|sausage|9.5
+New York Pizza|cheese|7
+New York Pizza|pepperoni|8
+New York Pizza|supreme|8.5
+Pizza Hut|cheese|9
+Pizza Hut|pepperoni|12
+Pizza Hut|sausage|12
+Pizza Hut|supreme|12
+Straw Hat|cheese|9.25
+Straw Hat|pepperoni|8
+Straw Hat|sausage|9.75
+-----
+Total number of rows: 19
+
+ra> Serves \cross Person;
+Output schema: (pizzeria text, pizza text, price float, name text, age integer, gender text)
+-----
+Amy|familiy|12.6|Amy|16|female
+Amy|familiy|12.6|Ben|21|male
+Amy|familiy|12.6|Cal|33|male
+Amy|familiy|12.6|Dan|13|male
+Amy|familiy|12.6|Eli|45|male
+Amy|familiy|12.6|Fay|21|female
+Amy|familiy|12.6|Gus|24|male
+Amy|familiy|12.6|Hil|30|female
+Amy|familiy|12.6|Ian|18|male
+Chicago Pizza|cheese|7.75|Amy|16|female
+Chicago Pizza|cheese|7.75|Ben|21|male
+Chicago Pizza|cheese|7.75|Cal|33|male
+Chicago Pizza|cheese|7.75|Dan|13|male
+Chicago Pizza|cheese|7.75|Eli|45|male
+Chicago Pizza|cheese|7.75|Fay|21|female
+Chicago Pizza|cheese|7.75|Gus|24|male
+Chicago Pizza|cheese|7.75|Hil|30|female
+Chicago Pizza|cheese|7.75|Ian|18|male
+Chicago Pizza|supreme|8.5|Amy|16|female
+Chicago Pizza|supreme|8.5|Ben|21|male
+Chicago Pizza|supreme|8.5|Cal|33|male
+Chicago Pizza|supreme|8.5|Dan|13|male
+Chicago Pizza|supreme|8.5|Eli|45|male
+Chicago Pizza|supreme|8.5|Fay|21|female
+Chicago Pizza|supreme|8.5|Gus|24|male
+Chicago Pizza|supreme|8.5|Hil|30|female
+Chicago Pizza|supreme|8.5|Ian|18|male
+Dominos|cheese|9.75|Amy|16|female
+Dominos|cheese|9.75|Ben|21|male
+Dominos|cheese|9.75|Cal|33|male
+Dominos|cheese|9.75|Dan|13|male
+Dominos|cheese|9.75|Eli|45|male
+Dominos|cheese|9.75|Fay|21|female
+Dominos|cheese|9.75|Gus|24|male
+Dominos|cheese|9.75|Hil|30|female
+Dominos|cheese|9.75|Ian|18|male
+Dominos|mushroom|11|Amy|16|female
+Dominos|mushroom|11|Ben|21|male
+Dominos|mushroom|11|Cal|33|male
+Dominos|mushroom|11|Dan|13|male
+Dominos|mushroom|11|Eli|45|male
+Dominos|mushroom|11|Fay|21|female
+Dominos|mushroom|11|Gus|24|male
+Dominos|mushroom|11|Hil|30|female
+Dominos|mushroom|11|Ian|18|male
+Little Caesars|cheese|7|Amy|16|female
+Little Caesars|cheese|7|Ben|21|male
+Little Caesars|cheese|7|Cal|33|male
+Little Caesars|cheese|7|Dan|13|male
+Little Caesars|cheese|7|Eli|45|male
+Little Caesars|cheese|7|Fay|21|female
+Little Caesars|cheese|7|Gus|24|male
+Little Caesars|cheese|7|Hil|30|female
+Little Caesars|cheese|7|Ian|18|male
+Little Caesars|mushroom|9.25|Amy|16|female
+Little Caesars|mushroom|9.25|Ben|21|male
+Little Caesars|mushroom|9.25|Cal|33|male
+Little Caesars|mushroom|9.25|Dan|13|male
+Little Caesars|mushroom|9.25|Eli|45|male
+Little Caesars|mushroom|9.25|Fay|21|female
+Little Caesars|mushroom|9.25|Gus|24|male
+Little Caesars|mushroom|9.25|Hil|30|female
+Little Caesars|mushroom|9.25|Ian|18|male
+Little Caesars|pepperoni|9.75|Amy|16|female
+Little Caesars|pepperoni|9.75|Ben|21|male
+Little Caesars|pepperoni|9.75|Cal|33|male
+Little Caesars|pepperoni|9.75|Dan|13|male
+Little Caesars|pepperoni|9.75|Eli|45|male
+Little Caesars|pepperoni|9.75|Fay|21|female
+Little Caesars|pepperoni|9.75|Gus|24|male
+Little Caesars|pepperoni|9.75|Hil|30|female
+Little Caesars|pepperoni|9.75|Ian|18|male
+Little Caesars|sausage|9.5|Amy|16|female
+Little Caesars|sausage|9.5|Ben|21|male
+Little Caesars|sausage|9.5|Cal|33|male
+Little Caesars|sausage|9.5|Dan|13|male
+Little Caesars|sausage|9.5|Eli|45|male
+Little Caesars|sausage|9.5|Fay|21|female
+Little Caesars|sausage|9.5|Gus|24|male
+Little Caesars|sausage|9.5|Hil|30|female
+Little Caesars|sausage|9.5|Ian|18|male
+New York Pizza|cheese|7|Amy|16|female
+New York Pizza|cheese|7|Ben|21|male
+New York Pizza|cheese|7|Cal|33|male
+New York Pizza|cheese|7|Dan|13|male
+New York Pizza|cheese|7|Eli|45|male
+New York Pizza|cheese|7|Fay|21|female
+New York Pizza|cheese|7|Gus|24|male
+New York Pizza|cheese|7|Hil|30|female
+New York Pizza|cheese|7|Ian|18|male
+New York Pizza|pepperoni|8|Amy|16|female
+New York Pizza|pepperoni|8|Ben|21|male
+New York Pizza|pepperoni|8|Cal|33|male
+New York Pizza|pepperoni|8|Dan|13|male
+New York Pizza|pepperoni|8|Eli|45|male
+New York Pizza|pepperoni|8|Fay|21|female
+New York Pizza|pepperoni|8|Gus|24|male
+New York Pizza|pepperoni|8|Hil|30|female
+New York Pizza|pepperoni|8|Ian|18|male
+New York Pizza|supreme|8.5|Amy|16|female
+New York Pizza|supreme|8.5|Ben|21|male
+New York Pizza|supreme|8.5|Cal|33|male
+New York Pizza|supreme|8.5|Dan|13|male
+New York Pizza|supreme|8.5|Eli|45|male
+New York Pizza|supreme|8.5|Fay|21|female
+New York Pizza|supreme|8.5|Gus|24|male
+New York Pizza|supreme|8.5|Hil|30|female
+New York Pizza|supreme|8.5|Ian|18|male
+Pizza Hut|cheese|9|Amy|16|female
+Pizza Hut|cheese|9|Ben|21|male
+Pizza Hut|cheese|9|Cal|33|male
+Pizza Hut|cheese|9|Dan|13|male
+Pizza Hut|cheese|9|Eli|45|male
+Pizza Hut|cheese|9|Fay|21|female
+Pizza Hut|cheese|9|Gus|24|male
+Pizza Hut|cheese|9|Hil|30|female
+Pizza Hut|cheese|9|Ian|18|male
+Pizza Hut|pepperoni|12|Amy|16|female
+Pizza Hut|pepperoni|12|Ben|21|male
+Pizza Hut|pepperoni|12|Cal|33|male
+Pizza Hut|pepperoni|12|Dan|13|male
+Pizza Hut|pepperoni|12|Eli|45|male
+Pizza Hut|pepperoni|12|Fay|21|female
+Pizza Hut|pepperoni|12|Gus|24|male
+Pizza Hut|pepperoni|12|Hil|30|female
+Pizza Hut|pepperoni|12|Ian|18|male
+Pizza Hut|sausage|12|Amy|16|female
+Pizza Hut|sausage|12|Ben|21|male
+Pizza Hut|sausage|12|Cal|33|male
+Pizza Hut|sausage|12|Dan|13|male
+Pizza Hut|sausage|12|Eli|45|male
+Pizza Hut|sausage|12|Fay|21|female
+Pizza Hut|sausage|12|Gus|24|male
+Pizza Hut|sausage|12|Hil|30|female
+Pizza Hut|sausage|12|Ian|18|male
+Pizza Hut|supreme|12|Amy|16|female
+Pizza Hut|supreme|12|Ben|21|male
+Pizza Hut|supreme|12|Cal|33|male
+Pizza Hut|supreme|12|Dan|13|male
+Pizza Hut|supreme|12|Eli|45|male
+Pizza Hut|supreme|12|Fay|21|female
+Pizza Hut|supreme|12|Gus|24|male
+Pizza Hut|supreme|12|Hil|30|female
+Pizza Hut|supreme|12|Ian|18|male
+Straw Hat|cheese|9.25|Amy|16|female
+Straw Hat|cheese|9.25|Ben|21|male
+Straw Hat|cheese|9.25|Cal|33|male
+Straw Hat|cheese|9.25|Dan|13|male
+Straw Hat|cheese|9.25|Eli|45|male
+Straw Hat|cheese|9.25|Fay|21|female
+Straw Hat|cheese|9.25|Gus|24|male
+Straw Hat|cheese|9.25|Hil|30|female
+Straw Hat|cheese|9.25|Ian|18|male
+Straw Hat|pepperoni|8|Amy|16|female
+Straw Hat|pepperoni|8|Ben|21|male
+Straw Hat|pepperoni|8|Cal|33|male
+Straw Hat|pepperoni|8|Dan|13|male
+Straw Hat|pepperoni|8|Eli|45|male
+Straw Hat|pepperoni|8|Fay|21|female
+Straw Hat|pepperoni|8|Gus|24|male
+Straw Hat|pepperoni|8|Hil|30|female
+Straw Hat|pepperoni|8|Ian|18|male
+Straw Hat|sausage|9.75|Amy|16|female
+Straw Hat|sausage|9.75|Ben|21|male
+Straw Hat|sausage|9.75|Cal|33|male
+Straw Hat|sausage|9.75|Dan|13|male
+Straw Hat|sausage|9.75|Eli|45|male
+Straw Hat|sausage|9.75|Fay|21|female
+Straw Hat|sausage|9.75|Gus|24|male
+Straw Hat|sausage|9.75|Hil|30|female
+Straw Hat|sausage|9.75|Ian|18|male
+-----
+Total number of rows: 171
+
+ra> Person \cross Eats;
+Output schema: (name text, age integer, gender text, name:1 text, pizza text)
+-----
+Amy|16|female|Ben|cheese
+Amy|16|female|Cal|supreme
+Amy|16|female|Dan|cheese
+Amy|16|female|Dan|mushroom
+Amy|16|female|Dan|pepperoni
+Amy|16|female|Dan|sausage
+Amy|16|female|Dan|supreme
+Amy|16|female|Eli|cheese
+Amy|16|female|Eli|supreme
+Amy|16|female|Fay|mushroom
+Amy|16|female|Gus|cheese
+Amy|16|female|Gus|mushroom
+Amy|16|female|Gus|supreme
+Amy|16|female|Hil|cheese
+Amy|16|female|Hil|supreme
+Amy|16|female|Ian|pepperoni
+Amy|16|female|Ian|supreme
+Ben|21|male|Ben|cheese
+Ben|21|male|Cal|supreme
+Ben|21|male|Dan|cheese
+Ben|21|male|Dan|mushroom
+Ben|21|male|Dan|pepperoni
+Ben|21|male|Dan|sausage
+Ben|21|male|Dan|supreme
+Ben|21|male|Eli|cheese
+Ben|21|male|Eli|supreme
+Ben|21|male|Fay|mushroom
+Ben|21|male|Gus|cheese
+Ben|21|male|Gus|mushroom
+Ben|21|male|Gus|supreme
+Ben|21|male|Hil|cheese
+Ben|21|male|Hil|supreme
+Ben|21|male|Ian|pepperoni
+Ben|21|male|Ian|supreme
+Cal|33|male|Ben|cheese
+Cal|33|male|Cal|supreme
+Cal|33|male|Dan|cheese
+Cal|33|male|Dan|mushroom
+Cal|33|male|Dan|pepperoni
+Cal|33|male|Dan|sausage
+Cal|33|male|Dan|supreme
+Cal|33|male|Eli|cheese
+Cal|33|male|Eli|supreme
+Cal|33|male|Fay|mushroom
+Cal|33|male|Gus|cheese
+Cal|33|male|Gus|mushroom
+Cal|33|male|Gus|supreme
+Cal|33|male|Hil|cheese
+Cal|33|male|Hil|supreme
+Cal|33|male|Ian|pepperoni
+Cal|33|male|Ian|supreme
+Dan|13|male|Ben|cheese
+Dan|13|male|Cal|supreme
+Dan|13|male|Dan|cheese
+Dan|13|male|Dan|mushroom
+Dan|13|male|Dan|pepperoni
+Dan|13|male|Dan|sausage
+Dan|13|male|Dan|supreme
+Dan|13|male|Eli|cheese
+Dan|13|male|Eli|supreme
+Dan|13|male|Fay|mushroom
+Dan|13|male|Gus|cheese
+Dan|13|male|Gus|mushroom
+Dan|13|male|Gus|supreme
+Dan|13|male|Hil|cheese
+Dan|13|male|Hil|supreme
+Dan|13|male|Ian|pepperoni
+Dan|13|male|Ian|supreme
+Eli|45|male|Ben|cheese
+Eli|45|male|Cal|supreme
+Eli|45|male|Dan|cheese
+Eli|45|male|Dan|mushroom
+Eli|45|male|Dan|pepperoni
+Eli|45|male|Dan|sausage
+Eli|45|male|Dan|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+Eli|45|male|Fay|mushroom
+Eli|45|male|Gus|cheese
+Eli|45|male|Gus|mushroom
+Eli|45|male|Gus|supreme
+Eli|45|male|Hil|cheese
+Eli|45|male|Hil|supreme
+Eli|45|male|Ian|pepperoni
+Eli|45|male|Ian|supreme
+Fay|21|female|Ben|cheese
+Fay|21|female|Cal|supreme
+Fay|21|female|Dan|cheese
+Fay|21|female|Dan|mushroom
+Fay|21|female|Dan|pepperoni
+Fay|21|female|Dan|sausage
+Fay|21|female|Dan|supreme
+Fay|21|female|Eli|cheese
+Fay|21|female|Eli|supreme
+Fay|21|female|Fay|mushroom
+Fay|21|female|Gus|cheese
+Fay|21|female|Gus|mushroom
+Fay|21|female|Gus|supreme
+Fay|21|female|Hil|cheese
+Fay|21|female|Hil|supreme
+Fay|21|female|Ian|pepperoni
+Fay|21|female|Ian|supreme
+Gus|24|male|Ben|cheese
+Gus|24|male|Cal|supreme
+Gus|24|male|Dan|cheese
+Gus|24|male|Dan|mushroom
+Gus|24|male|Dan|pepperoni
+Gus|24|male|Dan|sausage
+Gus|24|male|Dan|supreme
+Gus|24|male|Eli|cheese
+Gus|24|male|Eli|supreme
+Gus|24|male|Fay|mushroom
+Gus|24|male|Gus|cheese
+Gus|24|male|Gus|mushroom
+Gus|24|male|Gus|supreme
+Gus|24|male|Hil|cheese
+Gus|24|male|Hil|supreme
+Gus|24|male|Ian|pepperoni
+Gus|24|male|Ian|supreme
+Hil|30|female|Ben|cheese
+Hil|30|female|Cal|supreme
+Hil|30|female|Dan|cheese
+Hil|30|female|Dan|mushroom
+Hil|30|female|Dan|pepperoni
+Hil|30|female|Dan|sausage
+Hil|30|female|Dan|supreme
+Hil|30|female|Eli|cheese
+Hil|30|female|Eli|supreme
+Hil|30|female|Fay|mushroom
+Hil|30|female|Gus|cheese
+Hil|30|female|Gus|mushroom
+Hil|30|female|Gus|supreme
+Hil|30|female|Hil|cheese
+Hil|30|female|Hil|supreme
+Hil|30|female|Ian|pepperoni
+Hil|30|female|Ian|supreme
+Ian|18|male|Ben|cheese
+Ian|18|male|Cal|supreme
+Ian|18|male|Dan|cheese
+Ian|18|male|Dan|mushroom
+Ian|18|male|Dan|pepperoni
+Ian|18|male|Dan|sausage
+Ian|18|male|Dan|supreme
+Ian|18|male|Eli|cheese
+Ian|18|male|Eli|supreme
+Ian|18|male|Fay|mushroom
+Ian|18|male|Gus|cheese
+Ian|18|male|Gus|mushroom
+Ian|18|male|Gus|supreme
+Ian|18|male|Hil|cheese
+Ian|18|male|Hil|supreme
+Ian|18|male|Ian|pepperoni
+Ian|18|male|Ian|supreme
+-----
+Total number of rows: 153
+
+ra> \select_{Person.name, Eats.name} Person \cross Eats;
+Error validating subquery:
+\select_{Person.name, Eats.name} <- ERROR!
+    Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+Error message: near ",": syntax error
+Error code: 0
+SQL state: null
+
+ra> \select_{Person.name = Eats.name} Person \cross Eats;
+Error validating subquery:
+\select_{Person.name = Eats.name} <- ERROR!
+    Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+Error message: no such column: Eats.name
+Error code: 0
+SQL state: null
+
+ra> \select_{Person.name = Eats.name} (Person \cross Eats);
+Error validating subquery:
+\select_{Person.name = Eats.name} <- ERROR!
+    \cross <- output schema: RA_TMP_VIEW_3(name text, age integer, gender text, name:1 text, pizza text)
+        Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+        Eats <- output schema: RA_TMP_VIEW_2(name text, pizza text)
+Error message: no such column: Eats.name
+Error code: 0
+SQL state: null
+
+ra> (Person \cross Eats);
+Output schema: (name text, age integer, gender text, name:1 text, pizza text)
+-----
+Amy|16|female|Ben|cheese
+Amy|16|female|Cal|supreme
+Amy|16|female|Dan|cheese
+Amy|16|female|Dan|mushroom
+Amy|16|female|Dan|pepperoni
+Amy|16|female|Dan|sausage
+Amy|16|female|Dan|supreme
+Amy|16|female|Eli|cheese
+Amy|16|female|Eli|supreme
+Amy|16|female|Fay|mushroom
+Amy|16|female|Gus|cheese
+Amy|16|female|Gus|mushroom
+Amy|16|female|Gus|supreme
+Amy|16|female|Hil|cheese
+Amy|16|female|Hil|supreme
+Amy|16|female|Ian|pepperoni
+Amy|16|female|Ian|supreme
+Ben|21|male|Ben|cheese
+Ben|21|male|Cal|supreme
+Ben|21|male|Dan|cheese
+Ben|21|male|Dan|mushroom
+Ben|21|male|Dan|pepperoni
+Ben|21|male|Dan|sausage
+Ben|21|male|Dan|supreme
+Ben|21|male|Eli|cheese
+Ben|21|male|Eli|supreme
+Ben|21|male|Fay|mushroom
+Ben|21|male|Gus|cheese
+Ben|21|male|Gus|mushroom
+Ben|21|male|Gus|supreme
+Ben|21|male|Hil|cheese
+Ben|21|male|Hil|supreme
+Ben|21|male|Ian|pepperoni
+Ben|21|male|Ian|supreme
+Cal|33|male|Ben|cheese
+Cal|33|male|Cal|supreme
+Cal|33|male|Dan|cheese
+Cal|33|male|Dan|mushroom
+Cal|33|male|Dan|pepperoni
+Cal|33|male|Dan|sausage
+Cal|33|male|Dan|supreme
+Cal|33|male|Eli|cheese
+Cal|33|male|Eli|supreme
+Cal|33|male|Fay|mushroom
+Cal|33|male|Gus|cheese
+Cal|33|male|Gus|mushroom
+Cal|33|male|Gus|supreme
+Cal|33|male|Hil|cheese
+Cal|33|male|Hil|supreme
+Cal|33|male|Ian|pepperoni
+Cal|33|male|Ian|supreme
+Dan|13|male|Ben|cheese
+Dan|13|male|Cal|supreme
+Dan|13|male|Dan|cheese
+Dan|13|male|Dan|mushroom
+Dan|13|male|Dan|pepperoni
+Dan|13|male|Dan|sausage
+Dan|13|male|Dan|supreme
+Dan|13|male|Eli|cheese
+Dan|13|male|Eli|supreme
+Dan|13|male|Fay|mushroom
+Dan|13|male|Gus|cheese
+Dan|13|male|Gus|mushroom
+Dan|13|male|Gus|supreme
+Dan|13|male|Hil|cheese
+Dan|13|male|Hil|supreme
+Dan|13|male|Ian|pepperoni
+Dan|13|male|Ian|supreme
+Eli|45|male|Ben|cheese
+Eli|45|male|Cal|supreme
+Eli|45|male|Dan|cheese
+Eli|45|male|Dan|mushroom
+Eli|45|male|Dan|pepperoni
+Eli|45|male|Dan|sausage
+Eli|45|male|Dan|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+Eli|45|male|Fay|mushroom
+Eli|45|male|Gus|cheese
+Eli|45|male|Gus|mushroom
+Eli|45|male|Gus|supreme
+Eli|45|male|Hil|cheese
+Eli|45|male|Hil|supreme
+Eli|45|male|Ian|pepperoni
+Eli|45|male|Ian|supreme
+Fay|21|female|Ben|cheese
+Fay|21|female|Cal|supreme
+Fay|21|female|Dan|cheese
+Fay|21|female|Dan|mushroom
+Fay|21|female|Dan|pepperoni
+Fay|21|female|Dan|sausage
+Fay|21|female|Dan|supreme
+Fay|21|female|Eli|cheese
+Fay|21|female|Eli|supreme
+Fay|21|female|Fay|mushroom
+Fay|21|female|Gus|cheese
+Fay|21|female|Gus|mushroom
+Fay|21|female|Gus|supreme
+Fay|21|female|Hil|cheese
+Fay|21|female|Hil|supreme
+Fay|21|female|Ian|pepperoni
+Fay|21|female|Ian|supreme
+Gus|24|male|Ben|cheese
+Gus|24|male|Cal|supreme
+Gus|24|male|Dan|cheese
+Gus|24|male|Dan|mushroom
+Gus|24|male|Dan|pepperoni
+Gus|24|male|Dan|sausage
+Gus|24|male|Dan|supreme
+Gus|24|male|Eli|cheese
+Gus|24|male|Eli|supreme
+Gus|24|male|Fay|mushroom
+Gus|24|male|Gus|cheese
+Gus|24|male|Gus|mushroom
+Gus|24|male|Gus|supreme
+Gus|24|male|Hil|cheese
+Gus|24|male|Hil|supreme
+Gus|24|male|Ian|pepperoni
+Gus|24|male|Ian|supreme
+Hil|30|female|Ben|cheese
+Hil|30|female|Cal|supreme
+Hil|30|female|Dan|cheese
+Hil|30|female|Dan|mushroom
+Hil|30|female|Dan|pepperoni
+Hil|30|female|Dan|sausage
+Hil|30|female|Dan|supreme
+Hil|30|female|Eli|cheese
+Hil|30|female|Eli|supreme
+Hil|30|female|Fay|mushroom
+Hil|30|female|Gus|cheese
+Hil|30|female|Gus|mushroom
+Hil|30|female|Gus|supreme
+Hil|30|female|Hil|cheese
+Hil|30|female|Hil|supreme
+Hil|30|female|Ian|pepperoni
+Hil|30|female|Ian|supreme
+Ian|18|male|Ben|cheese
+Ian|18|male|Cal|supreme
+Ian|18|male|Dan|cheese
+Ian|18|male|Dan|mushroom
+Ian|18|male|Dan|pepperoni
+Ian|18|male|Dan|sausage
+Ian|18|male|Dan|supreme
+Ian|18|male|Eli|cheese
+Ian|18|male|Eli|supreme
+Ian|18|male|Fay|mushroom
+Ian|18|male|Gus|cheese
+Ian|18|male|Gus|mushroom
+Ian|18|male|Gus|supreme
+Ian|18|male|Hil|cheese
+Ian|18|male|Hil|supreme
+Ian|18|male|Ian|pepperoni
+Ian|18|male|Ian|supreme
+-----
+Total number of rows: 153
+
+ra> \select_{name = name:1} (Person \cross Eats);
+Error validating subquery:
+\select_{name = name:1} <- ERROR!
+    \cross <- output schema: RA_TMP_VIEW_3(name text, age integer, gender text, name:1 text, pizza text)
+        Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+        Eats <- output schema: RA_TMP_VIEW_2(name text, pizza text)
+Error message: near ":1": syntax error
+Error code: 0
+SQL state: null
+
+ra> \rename_{name1, age, gender}Person \cross \rename_{name2, pizza} Eats;
+Output schema: (name1 text, age integer, gender text, name2 text, pizza text)
+-----
+Amy|16|female|Ben|cheese
+Amy|16|female|Cal|supreme
+Amy|16|female|Dan|cheese
+Amy|16|female|Dan|mushroom
+Amy|16|female|Dan|pepperoni
+Amy|16|female|Dan|sausage
+Amy|16|female|Dan|supreme
+Amy|16|female|Eli|cheese
+Amy|16|female|Eli|supreme
+Amy|16|female|Fay|mushroom
+Amy|16|female|Gus|cheese
+Amy|16|female|Gus|mushroom
+Amy|16|female|Gus|supreme
+Amy|16|female|Hil|cheese
+Amy|16|female|Hil|supreme
+Amy|16|female|Ian|pepperoni
+Amy|16|female|Ian|supreme
+Ben|21|male|Ben|cheese
+Ben|21|male|Cal|supreme
+Ben|21|male|Dan|cheese
+Ben|21|male|Dan|mushroom
+Ben|21|male|Dan|pepperoni
+Ben|21|male|Dan|sausage
+Ben|21|male|Dan|supreme
+Ben|21|male|Eli|cheese
+Ben|21|male|Eli|supreme
+Ben|21|male|Fay|mushroom
+Ben|21|male|Gus|cheese
+Ben|21|male|Gus|mushroom
+Ben|21|male|Gus|supreme
+Ben|21|male|Hil|cheese
+Ben|21|male|Hil|supreme
+Ben|21|male|Ian|pepperoni
+Ben|21|male|Ian|supreme
+Cal|33|male|Ben|cheese
+Cal|33|male|Cal|supreme
+Cal|33|male|Dan|cheese
+Cal|33|male|Dan|mushroom
+Cal|33|male|Dan|pepperoni
+Cal|33|male|Dan|sausage
+Cal|33|male|Dan|supreme
+Cal|33|male|Eli|cheese
+Cal|33|male|Eli|supreme
+Cal|33|male|Fay|mushroom
+Cal|33|male|Gus|cheese
+Cal|33|male|Gus|mushroom
+Cal|33|male|Gus|supreme
+Cal|33|male|Hil|cheese
+Cal|33|male|Hil|supreme
+Cal|33|male|Ian|pepperoni
+Cal|33|male|Ian|supreme
+Dan|13|male|Ben|cheese
+Dan|13|male|Cal|supreme
+Dan|13|male|Dan|cheese
+Dan|13|male|Dan|mushroom
+Dan|13|male|Dan|pepperoni
+Dan|13|male|Dan|sausage
+Dan|13|male|Dan|supreme
+Dan|13|male|Eli|cheese
+Dan|13|male|Eli|supreme
+Dan|13|male|Fay|mushroom
+Dan|13|male|Gus|cheese
+Dan|13|male|Gus|mushroom
+Dan|13|male|Gus|supreme
+Dan|13|male|Hil|cheese
+Dan|13|male|Hil|supreme
+Dan|13|male|Ian|pepperoni
+Dan|13|male|Ian|supreme
+Eli|45|male|Ben|cheese
+Eli|45|male|Cal|supreme
+Eli|45|male|Dan|cheese
+Eli|45|male|Dan|mushroom
+Eli|45|male|Dan|pepperoni
+Eli|45|male|Dan|sausage
+Eli|45|male|Dan|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+Eli|45|male|Fay|mushroom
+Eli|45|male|Gus|cheese
+Eli|45|male|Gus|mushroom
+Eli|45|male|Gus|supreme
+Eli|45|male|Hil|cheese
+Eli|45|male|Hil|supreme
+Eli|45|male|Ian|pepperoni
+Eli|45|male|Ian|supreme
+Fay|21|female|Ben|cheese
+Fay|21|female|Cal|supreme
+Fay|21|female|Dan|cheese
+Fay|21|female|Dan|mushroom
+Fay|21|female|Dan|pepperoni
+Fay|21|female|Dan|sausage
+Fay|21|female|Dan|supreme
+Fay|21|female|Eli|cheese
+Fay|21|female|Eli|supreme
+Fay|21|female|Fay|mushroom
+Fay|21|female|Gus|cheese
+Fay|21|female|Gus|mushroom
+Fay|21|female|Gus|supreme
+Fay|21|female|Hil|cheese
+Fay|21|female|Hil|supreme
+Fay|21|female|Ian|pepperoni
+Fay|21|female|Ian|supreme
+Gus|24|male|Ben|cheese
+Gus|24|male|Cal|supreme
+Gus|24|male|Dan|cheese
+Gus|24|male|Dan|mushroom
+Gus|24|male|Dan|pepperoni
+Gus|24|male|Dan|sausage
+Gus|24|male|Dan|supreme
+Gus|24|male|Eli|cheese
+Gus|24|male|Eli|supreme
+Gus|24|male|Fay|mushroom
+Gus|24|male|Gus|cheese
+Gus|24|male|Gus|mushroom
+Gus|24|male|Gus|supreme
+Gus|24|male|Hil|cheese
+Gus|24|male|Hil|supreme
+Gus|24|male|Ian|pepperoni
+Gus|24|male|Ian|supreme
+Hil|30|female|Ben|cheese
+Hil|30|female|Cal|supreme
+Hil|30|female|Dan|cheese
+Hil|30|female|Dan|mushroom
+Hil|30|female|Dan|pepperoni
+Hil|30|female|Dan|sausage
+Hil|30|female|Dan|supreme
+Hil|30|female|Eli|cheese
+Hil|30|female|Eli|supreme
+Hil|30|female|Fay|mushroom
+Hil|30|female|Gus|cheese
+Hil|30|female|Gus|mushroom
+Hil|30|female|Gus|supreme
+Hil|30|female|Hil|cheese
+Hil|30|female|Hil|supreme
+Hil|30|female|Ian|pepperoni
+Hil|30|female|Ian|supreme
+Ian|18|male|Ben|cheese
+Ian|18|male|Cal|supreme
+Ian|18|male|Dan|cheese
+Ian|18|male|Dan|mushroom
+Ian|18|male|Dan|pepperoni
+Ian|18|male|Dan|sausage
+Ian|18|male|Dan|supreme
+Ian|18|male|Eli|cheese
+Ian|18|male|Eli|supreme
+Ian|18|male|Fay|mushroom
+Ian|18|male|Gus|cheese
+Ian|18|male|Gus|mushroom
+Ian|18|male|Gus|supreme
+Ian|18|male|Hil|cheese
+Ian|18|male|Hil|supreme
+Ian|18|male|Ian|pepperoni
+Ian|18|male|Ian|supreme
+-----
+Total number of rows: 153
+
+ra> \select_{name1 = name2} \rename_{name1, age, gender}Person \cross \rename_{name2, pizza} Eats;
+Error validating subquery:
+\select_{name1 = name2} <- ERROR!
+    \rename_{name1, age, gender} <- output schema: RA_TMP_VIEW_2(name1 text, age integer, gender text)
+        Person <- output schema: RA_TMP_VIEW_1(name text, age integer, gender text)
+Error message: no such column: name2
+Error code: 0
+SQL state: null
+
+ra> \select_{name1 = name2} (\rename_{name1, age, gender}Person \cross \rename_{name2, pizza} Eats);
+Output schema: (name1 text, age integer, gender text, name2 text, pizza text)
+-----
+Ben|21|male|Ben|cheese
+Cal|33|male|Cal|supreme
+Dan|13|male|Dan|cheese
+Dan|13|male|Dan|mushroom
+Dan|13|male|Dan|pepperoni
+Dan|13|male|Dan|sausage
+Dan|13|male|Dan|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+Fay|21|female|Fay|mushroom
+Gus|24|male|Gus|cheese
+Gus|24|male|Gus|mushroom
+Gus|24|male|Gus|supreme
+Hil|30|female|Hil|cheese
+Hil|30|female|Hil|supreme
+Ian|18|male|Ian|pepperoni
+Ian|18|male|Ian|supreme
+-----
+Total number of rows: 17
+
+ra> \select_{name1 = name2 and age > 30} (\rename_{name1, age, gender}Person \cross \rename_{name2, pizza} Eats);
+Output schema: (name1 text, age integer, gender text, name2 text, pizza text)
+-----
+Cal|33|male|Cal|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+-----
+Total number of rows: 3
+
+ra> rson rson rson rson 

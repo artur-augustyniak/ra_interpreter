@@ -1,0 +1,81 @@
+ 
+r ra.jar 
+
+RA: an interactive relational algebra interpreter
+Version 2.1b by Jun Yang (junyang@cs.duke.edu)
+Type "\help;" for help
+
+ra> \select_{name1 = name2 and age > 30} (\rename_{name1, age, gender}Person \cross \rename_{name2, pizza} Eats);
+Output schema: (name1 text, age integer, gender text, name2 text, pizza text)
+-----
+Cal|33|male|Cal|supreme
+Eli|45|male|Eli|cheese
+Eli|45|male|Eli|supreme
+-----
+Total number of rows: 3
+
+ra> Person \join Eats;
+Output schema: (name text, age integer, gender text, pizza text)
+-----
+Ben|21|male|cheese
+Cal|33|male|supreme
+Dan|13|male|cheese
+Dan|13|male|mushroom
+Dan|13|male|pepperoni
+Dan|13|male|sausage
+Dan|13|male|supreme
+Eli|45|male|cheese
+Eli|45|male|supreme
+Fay|21|female|mushroom
+Gus|24|male|cheese
+Gus|24|male|mushroom
+Gus|24|male|supreme
+Hil|30|female|cheese
+Hil|30|female|supreme
+Ian|18|male|pepperoni
+Ian|18|male|supreme
+-----
+Total number of rows: 17
+
+ra> \select_{age > 30} (Person \join Eats);
+Output schema: (name text, age integer, gender text, pizza text)
+-----
+Cal|33|male|supreme
+Eli|45|male|cheese
+Eli|45|male|supreme
+-----
+Total number of rows: 3
+
+ra> \select_{age > 30} (Person \join (Eats \join Serves));
+Output schema: (name text, age integer, gender text, pizza text, pizzeria text, price float)
+-----
+Cal|33|male|supreme|Chicago Pizza|8.5
+Cal|33|male|supreme|New York Pizza|8.5
+Cal|33|male|supreme|Pizza Hut|12
+Eli|45|male|cheese|Chicago Pizza|7.75
+Eli|45|male|cheese|Dominos|9.75
+Eli|45|male|cheese|Little Caesars|7
+Eli|45|male|cheese|New York Pizza|7
+Eli|45|male|cheese|Pizza Hut|9
+Eli|45|male|cheese|Straw Hat|9.25
+Eli|45|male|supreme|Chicago Pizza|8.5
+Eli|45|male|supreme|New York Pizza|8.5
+Eli|45|male|supreme|Pizza Hut|12
+-----
+Total number of rows: 12
+
+ra> \select_{age > 30 and price < 12} (Person \join (Eats \join Serves));
+Output schema: (name text, age integer, gender text, pizza text, pizzeria text, price float)
+-----
+Cal|33|male|supreme|Chicago Pizza|8.5
+Cal|33|male|supreme|New York Pizza|8.5
+Eli|45|male|cheese|Chicago Pizza|7.75
+Eli|45|male|cheese|Dominos|9.75
+Eli|45|male|cheese|Little Caesars|7
+Eli|45|male|cheese|New York Pizza|7
+Eli|45|male|cheese|Pizza Hut|9
+Eli|45|male|cheese|Straw Hat|9.25
+Eli|45|male|supreme|Chicago Pizza|8.5
+Eli|45|male|supreme|New York Pizza|8.5
+-----
+Total number of rows: 10
